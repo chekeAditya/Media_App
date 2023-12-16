@@ -26,7 +26,7 @@ class MusicPlayerService : Service() {
         Log.d(Constants.TAG, "onStartCommand: ")
         when (intent?.action ?: Actions.START.toString()) {
             Actions.START.toString() -> if (mMediaPlayer == null) serviceStart()
-            Actions.STOP.toString() -> stopMusic()
+            Actions.STOP.toString() -> stopSelf()
         }
         return START_STICKY
     }
@@ -102,7 +102,6 @@ class MusicPlayerService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(Constants.TAG, "onDestroy: ")
-        stopMusic()
     }
 
     enum class Actions {
