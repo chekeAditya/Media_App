@@ -1,19 +1,15 @@
 package com.app.mediaapp.musicService
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.IBinder
-import android.os.PowerManager
 import android.util.Log
-import android.util.TimeUtils
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.app.mediaapp.R
 import com.app.mediaapp.utility.Constants
-import java.sql.Time
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -106,6 +102,7 @@ class MusicPlayerService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(Constants.TAG, "onDestroy: ")
+        stopMusic()
     }
 
     enum class Actions {
