@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:name=".app.MusicApp"
@@ -31,6 +32,14 @@
         <service
             android:name=".musicService.MusicPlayerService"
             android:foregroundServiceType="mediaPlayback" />
+
+        <receiver
+            android:name=".musicService.DozeModeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.os.action.DEVICE_IDLE_MODE_CHANGED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

@@ -1,10 +1,12 @@
 package com.app.mediaapp.musicService
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.IBinder
+import android.os.PowerManager
 import android.util.Log
 import android.util.TimeUtils
 import android.widget.Toast
@@ -25,11 +27,12 @@ class MusicPlayerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when (intent?.action) {
-            Actions.START.toString() -> serviceStart()
-            Actions.STOP.toString() -> stopSelf()
+        Log.d(Constants.TAG, "onStartCommand: ")
+        when (intent?.action ?: Actions.START.toString()) {
+            Actions.START.toString() -> if (mMediaPlayer == null) serviceStart()
+            Actions.STOP.toString() -> stopMusic()
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     private fun serviceStart() {
@@ -43,6 +46,7 @@ class MusicPlayerService : Service() {
     }
 
     private fun startMusic() {
+        Log.d(Constants.TAG, "startMusic: ")
         val audioUrl = "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3"
         mMediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
@@ -63,18 +67,45 @@ class MusicPlayerService : Service() {
 
     private fun stopMusic() {
         if (mMediaPlayer?.isPlaying == true) {
+            Log.d(Constants.TAG, "stopMusic: ")
             mMediaPlayer?.stop()
             mMediaPlayer?.reset()
             mMediaPlayer?.release()
             mMediaPlayer = null
         } else {
+            Log.d(Constants.TAG, "stopMusic:  Not Playing")
             Toast.makeText(this, "Audio not playing", Toast.LENGTH_LONG).show()
         }
     }
 
+    override fun onLowMemory() {
+        super.onLowMemory()
+        Log.d(Constants.TAG, "onLowMemory: ")
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        Log.d(Constants.TAG, "onTaskRemoved: ")
+    }
+
+    override fun onTimeout(startId: Int) {
+        super.onTimeout(startId)
+        Log.d(Constants.TAG, "onTimeout: ")
+    }
+
+    override fun onRebind(intent: Intent?) {
+        super.onRebind(intent)
+        Log.d(Constants.TAG, "onRebind: ")
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        Log.d(Constants.TAG, "onTrimMemory: ")
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        stopMusic()
+        Log.d(Constants.TAG, "onDestroy: ")
     }
 
     enum class Actions {
