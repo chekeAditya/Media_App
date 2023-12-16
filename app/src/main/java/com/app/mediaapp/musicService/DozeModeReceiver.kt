@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.PowerManager
 import android.util.Log
 
-
 class DozeModeReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {

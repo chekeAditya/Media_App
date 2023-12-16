@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     private fun serviceStart() {
         Intent(applicationContext, MusicPlayerService::class.java).also {
             it.action = MusicPlayerService.Actions.START.toString()
+            it.putExtra(Constants.songUrl, Constants.SONG_1)
             startService(it)
         }
     }

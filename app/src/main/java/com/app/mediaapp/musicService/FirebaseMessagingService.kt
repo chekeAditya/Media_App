@@ -1,12 +1,10 @@
 package com.app.mediaapp.musicService
 
 import android.content.Intent
-import android.media.MediaPlayer
 import android.util.Log
 import com.app.mediaapp.utility.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -17,15 +15,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-
-        // Log the message for debugging purposes
         Log.d(Constants.TAG, "From: ")
-        serviceStart()
+        if (remoteMessage.notification?.title == "Play Song") serviceStart(remoteMessage.notification?.body)
     }
 
-    private fun serviceStart() {
+    private fun serviceStart(body: String?) {
         Intent(applicationContext, MusicPlayerService::class.java).also {
             it.action = MusicPlayerService.Actions.START.toString()
+            it.putExtra(Constants.songUrl, body)
             startService(it)
         }
     }
@@ -36,7 +33,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 Log.d(Constants.TAG, "handleIntent: 1")
                 val builder = RemoteMessage.Builder("MessagingService")
                 for (key in intent.extras!!.keySet()) {
-                    Log.d(Constants.TAG, "handleIntent: 4")
                     builder.addData(key, intent.extras!!.getString(key).toString())
                 }
                 onMessageReceived(builder.build())

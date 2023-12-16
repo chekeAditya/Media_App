@@ -23,16 +23,17 @@ class MusicPlayerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(Constants.TAG, "mMediaPlayer: ")
         Log.d(Constants.TAG, "onStartCommand: ")
         when (intent?.action ?: Actions.START.toString()) {
-            Actions.START.toString() -> if (mMediaPlayer == null) serviceStart()
-            Actions.STOP.toString() -> stopSelf()
+            Actions.START.toString() -> if (mMediaPlayer == null) serviceStart(intent?.getStringExtra(Constants.songUrl))
+            Actions.STOP.toString() -> stopMusic()
         }
         return START_STICKY
     }
 
-    private fun serviceStart() {
-        startMusic()
+    private fun serviceStart(songUrl: String?) {
+        startMusic(songUrl)
         val notification = NotificationCompat.Builder(this, Constants.MUSIC_CHANNEL)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Music is playing")
@@ -41,9 +42,8 @@ class MusicPlayerService : Service() {
         startForeground(1, notification)
     }
 
-    private fun startMusic() {
+    private fun startMusic(songUrl: String?) {
         Log.d(Constants.TAG, "startMusic: ")
-        val audioUrl = "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3"
         mMediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
                 AudioAttributes.Builder()
@@ -51,7 +51,7 @@ class MusicPlayerService : Service() {
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .build()
             )
-            setDataSource(audioUrl)
+            setDataSource(songUrl)
             prepareAsync()
             setOnPreparedListener { start() }
             setOnErrorListener { _, what, extra ->
